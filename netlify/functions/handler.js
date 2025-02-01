@@ -1,12 +1,12 @@
-import { Telegraf } from "telegraf";
-import fs from "fs";
+const { Telegraf } = require("telegraf");
+const fetch = require("node-fetch");
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const bot = new Telegraf(BOT_TOKEN);
 
 bot.start((ctx) =>
   ctx.reply(
-    "Я бот, який видобуває координати із JSON файла. Надішли мені файл."
+    "Я бот, який видобуває координати із JSON файлу. Надішли мені файл."
   )
 );
 bot.help((ctx) => ctx.reply("Надішли мені JSON-файл, і я витягну координати."));
@@ -31,21 +31,32 @@ bot.on("document", async (ctx) => {
 
     ctx.reply(finalText);
   } catch (error) {
-    console.error("Помилка обробки файлу: ", error);
+    console.error("Помилка обробки файлу:", error);
     ctx.reply("Сталася помилка при обробці файлу.");
   }
 });
 
-export default async function handler(req, res) {
-  if (req.method === "POST") {
+// Стандартний формат Netlify Functions
+exports.handler = async (event, context) => {
+  if (event.httpMethod === "POST") {
     try {
-      await bot.handleUpdate(req.body);
-      res.status(200).send("ok");
+      const update = JSON.parse(event.body);
+      await bot.handleUpdate(update);
+      return {
+        statusCode: 200,
+        body: "ok",
+      };
     } catch (error) {
       console.error("Webhook error:", error);
-      res.status(500).send("Error");
+      return {
+        statusCode: 500,
+        body: "Error",
+      };
     }
   } else {
-    res.status(200).send("Telegram bot is running");
+    return {
+      statusCode: 200,
+      body: "Telegram bot is running",
+    };
   }
-}
+};
