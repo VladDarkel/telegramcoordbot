@@ -1,4 +1,4 @@
-const { Telegraf } = require("telegraf");
+const { Telegraf, Input } = require("telegraf");
 const fetch = require("node-fetch");
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
@@ -14,6 +14,7 @@ bot.help((ctx) => ctx.reply("Надішли мені JSON-файл, і я вит
 bot.on("document", async (ctx) => {
   try {
     const fileId = ctx.message.document.file_id;
+    const jsonName = ctx.message.document.file_name.split(".")[0]; // наприклад, якщо файл має назву "data.json"
     const file = await ctx.telegram.getFile(fileId);
     const fileUrl = `https://api.telegram.org/file/bot${BOT_TOKEN}/${file.file_path}`;
 
@@ -29,7 +30,15 @@ bot.on("document", async (ctx) => {
       .map((c, i) => `${i + 1} ${c[1].toFixed(3)} ${c[0].toFixed(3)}`)
       .join("\n");
 
-    ctx.reply(finalText);
+    // Відправляємо текстове повідомлення з координатами
+    await ctx.reply(finalText);
+
+    // Створюємо Buffer із текстом і відправляємо його як документ
+    const documentBuffer = Buffer.from(finalText, "utf-8");
+    await ctx.replyWithDocument({
+      source: documentBuffer,
+      filename: `${jsonName}_coord.txt`,
+    });
   } catch (error) {
     console.error("Помилка обробки файлу:", error);
     ctx.reply("Сталася помилка при обробці файлу.");
