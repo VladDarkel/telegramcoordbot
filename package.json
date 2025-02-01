@@ -1,21 +1,13 @@
 {
-  "name": "telegramcoordbot",
+  "name": "my-telegram-bot",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "netlify/functions/handler.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "netlify dev",
+    "build": "echo \"Nothing to build\""
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/VladDarkel/telegramcoordbot.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/VladDarkel/telegramcoordbot/issues"
-  },
-  "homepage": "https://github.com/VladDarkel/telegramcoordbot#readme",
-  "description": ""
+  "dependencies": {
+    "telegraf": "^4.12.2",
+    "node-fetch": "^2.6.1"
+  }
 }
