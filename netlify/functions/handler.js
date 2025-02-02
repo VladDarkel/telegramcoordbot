@@ -32,7 +32,7 @@ bot.on("document", async (ctx) => {
 
     // Відправляємо текстове повідомлення з координатами
     await ctx.reply(finalText);
-
+    console.log(finalText);
     // Створюємо Buffer із текстом і відправляємо його як документ
     const documentBuffer = Buffer.from(finalText, "utf-8");
     await ctx.replyWithDocument({
